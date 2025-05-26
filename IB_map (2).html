@@ -1,0 +1,72 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Carte Dynamique avec Options</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+      #map { height: 100%; width: 100%; }
+      html, body { height: 100%; margin: 0; }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+    <script>
+      // Function to get URL parameters
+      function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? null : decodeURIComponent(results[1].replace(/\+/g, ' '));
+      }
+
+      // Get latitude and longitude from URL parameters
+      var lat = parseFloat(getUrlParameter('lat')) || 47.883;
+      var lng = parseFloat(getUrlParameter('lng')) || 6.383;
+
+      // Initialize the map
+      var map = L.map('map').setView([lat, lng], 14);
+
+      // Base layers
+      var baseLayers = {
+        "Plan": L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          attribution: '© OpenStreetMap contributors'
+        }),
+        "Satellite": L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          attribution: 'Tiles © Esri'
+        })
+      };
+
+      // Add default layer to map
+      baseLayers["Satellite"].addTo(map);
+
+      // Layer control
+      L.control.layers(baseLayers).addTo(map);
+
+      // Add scale control
+      L.control.scale().addTo(map);
+
+      // Add geolocation control
+      L.control.locate().addTo(map);
+
+      // Add marker at the center
+      var marker = L.marker([lat, lng]).addTo(map)
+        .bindPopup('Position actuelle')
+        .openPopup();
+
+      // Function to add a new marker
+      function addMarker(lat, lng) {
+        L.marker([lat, lng]).addTo(map)
+          .bindPopup('Nouveau marqueur')
+          .openPopup();
+      }
+
+      // Example: Add another marker
+      addMarker(47.9, 6.4);
+    </script>
+  </body>
+</html>
