@@ -1,0 +1,34 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Localisation GPS</title>
+</head>
+<body>
+    <script>
+        async function getLocationInfo() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lat = urlParams.get('lat');
+            const lon = urlParams.get('lon');
+
+            if (lat && lon) {
+                const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                const data = await response.json();
+
+                const result = {
+                    city: data.address.city || data.address.town || data.address.village || "Inconnue",
+                    state: data.address.state || "Inconnue",
+                    country: data.address.country || "Inconnu"
+                };
+                document.body.innerText = JSON.stringify(result);
+            } else {
+                document.body.innerText = JSON.stringify({ error: "Coordonnées GPS manquantes." });
+            }
+        }
+
+        window.onload = getLocationInfo;
+    </script>
+</body>
+</html>
