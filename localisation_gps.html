@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Localisation GPS</title>
+</head>
+<body>
+    <h1>Localisation GPS</h1>
+    <div id="result">Chargement de la localisation...</div>
+
+    <script>
+        async function getLocationInfo() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async function(position) {
+                    const lat = position.coords.latitude;
+                    const lon = position.coords.longitude;
+
+                    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
+                    const data = await response.json();
+
+                    const city = data.address.city || data.address.town || data.address.village || "Inconnue";
+                    const state = data.address.state || "Inconnue";
+                    const country = data.address.country || "Inconnu";
+
+                    document.getElementById("result").innerHTML =
+                        `<strong>Ville :</strong> ${city}<br>
+                         <strong>Région :</strong> ${state}<br>
+                         <strong>Pays :</strong> ${country}`;
+                });
+            } else {
+                document.getElementById("result").innerText = "La géolocalisation n'est pas supportée.";
+            }
+        }
+
+        window.onload = getLocationInfo;
+    </script>
+</body>
+</html>
