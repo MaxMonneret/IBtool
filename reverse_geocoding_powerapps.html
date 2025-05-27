@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Reverse Geocoding with OpenCage</title>
+  <script>
+    async function getGeolocation() {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(async function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const apiKey = 'ed3deb291304486181a5c8e3bbaef711';
+          const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}&language=en`;
+
+          try {
+            const response = await fetch(url);
+            const data = await response.json();
+            const components = data.results[0].components;
+
+            document.getElementById('city').innerText = 'City: ' + (components.city || components.town || components.village || 'N/A');
+            document.getElementById('state').innerText = 'State: ' + (components.state || 'N/A');
+            document.getElementById('country').innerText = 'Country: ' + (components.country || 'N/A');
+          } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to retrieve location data.');
+          }
+        });
+      } else {
+        alert('Geolocation is not supported by this browser.');
+      }
+    }
+  </script>
+</head>
+<body onload="getGeolocation()">
+  <h2>Reverse Geocoding with OpenCage</h2>
+  <hr>
+  <p id="city">City: </p>
+  <p id="state">State: </p>
+  <p id="country">Country: </p>
+</body>
+</html>
