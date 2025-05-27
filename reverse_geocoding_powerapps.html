@@ -1,9 +1,8 @@
-
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Reverse Geocoding with OpenCage</title>
+  <title>Localisation vers Power Apps</title>
   <script>
     async function getGeolocation() {
       if (navigator.geolocation) {
@@ -11,32 +10,33 @@
           const lat = position.coords.latitude;
           const lon = position.coords.longitude;
           const apiKey = 'ed3deb291304486181a5c8e3bbaef711';
-          const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}&language=en`;
+          const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat}+${lon}&key=${apiKey}&language=fr`;
 
           try {
             const response = await fetch(url);
             const data = await response.json();
             const components = data.results[0].components;
 
-            document.getElementById('city').innerText = 'City: ' + (components.city || components.town || components.village || 'N/A');
-            document.getElementById('state').innerText = 'State: ' + (components.state || 'N/A');
-            document.getElementById('country').innerText = 'Country: ' + (components.country || 'N/A');
+            const city = components.city || components.town || components.village || 'N/A';
+            const state = components.state || 'N/A';
+            const country = components.country || 'N/A';
+
+            // Envoi des données à Power Apps via postMessage
+            window.parent.postMessage(
+              { city, state, country },
+              '*'
+            );
           } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to retrieve location data.');
+            console.error('Erreur :', error);
           }
         });
       } else {
-        alert('Geolocation is not supported by this browser.');
+        alert('La géolocalisation n’est pas supportée.');
       }
     }
   </script>
 </head>
 <body onload="getGeolocation()">
-  <h2>Reverse Geocoding with OpenCage</h2>
-  <hr>
-  <p id="city">City: </p>
-  <p id="state">State: </p>
-  <p id="country">Country: </p>
+  <h2>Récupération de la localisation...</h2>
 </body>
 </html>
